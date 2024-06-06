@@ -1,0 +1,41 @@
+import psutil
+import socket
+import tkinter as tk
+from tkinter import ttk
+
+# Function to gather computer details
+def get_computer_details():
+    computer_details = {}
+    
+    # Get computer name and hostname
+    computer_details['Computer Name'] = socket.gethostname()
+    computer_details['Hostname'] = socket.getfqdn()
+    
+    # Get system and CPU information
+    computer_details['CPU Count'] = psutil.cpu_count(logical=False)
+    computer_details['Total Memory (GB)'] = round(psutil.virtual_memory().total / (1024 ** 3), 2)
+    
+    return computer_details
+
+# Function to display the computer details in the GUI
+def display_details():
+    details = get_computer_details()
+    for key, value in details.items():
+        tree.insert('', 'end', text=key, values=(value,))
+
+# Set up the main application window
+root = tk.Tk()
+root.title("Computer Details")
+
+# Create a Treeview widget to display the details
+tree = ttk.Treeview(root, columns=('Value',), show='tree headings')
+tree.heading('#0', text='Detail')
+tree.heading('#1', text='Value')
+tree.pack(expand=True, fill=tk.BOTH)
+
+# Create a button to trigger the details display
+button = tk.Button(root, text="Get Computer Details", command=display_details)
+button.pack(pady=10)
+
+# Run the main application loop
+root.mainloop()
